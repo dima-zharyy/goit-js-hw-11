@@ -1,28 +1,24 @@
 import axios from 'axios';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const BASE_URL_AND_KEY =
-  'https://pixabay.com/api/?key=27891054-2199c429fab30e58c22aa7ec7';
+const BASE_URL = 'https://pixabay.com/api/';
+const options = [
+  'key=27891054-2199c429fab30e58c22aa7ec7',
+  'image_type=photo',
+  'orientation=horizontal',
+  'safesearch=true',
+];
 
-export default async function getPictures() {
+export default async function fetchPictures(userQuery) {
   try {
     const response = await axios.get(
-      `${BASE_URL_AND_KEY}&q=dogs&image_type=photo&orientation=horizontal&safesearch=true`
+      `${BASE_URL}?q=${userQuery}&${options.join('&')}`
     );
-    const data = await response.json();
 
+    const data = await response.data;
     console.log(data);
     return data;
   } catch (error) {
-    console.error(error);
+    Notify.failure(`Someone wrote incorrect code :)`);
   }
 }
-
-// export default async function fetchPictures() {
-//   // axios.get(
-//   //   `${BASE_URL_AND_KEY}&q=dogs&image_type=photo&orientation=horizontal&safesearch=true`
-//   // );
-
-//   return await fetch(
-//     `${BASE_URL_AND_KEY}&q=dogs&image_type=photo&orientation=horizontal&safesearch=true`
-//   );
-// }
