@@ -39,7 +39,7 @@ body {
 .gallery {
   display: grid;
   max-width: 1140px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   grid-auto-rows: 190px;
   grid-gap: 12px;
   justify-content: center;
@@ -77,4 +77,12 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
+}
+
+.gallery__info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-size: 0.8em;
 }
