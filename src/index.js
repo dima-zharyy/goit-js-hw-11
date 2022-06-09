@@ -11,6 +11,10 @@ const STORAGE_KEY = 'user-input-data';
 let inputData = localStorage.getItem(STORAGE_KEY)
   ? JSON.parse(localStorage.getItem(STORAGE_KEY))
   : null;
+const gallery = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 refs.form.addEventListener('input', throttle(onUserInput, 300));
 refs.form.addEventListener('submit', onSubmit);
@@ -19,6 +23,11 @@ populateUserInput();
 
 function onSubmit(event) {
   event.preventDefault();
+
+  if (!event.currentTarget.elements.searchQuery.value) {
+    Notify.failure('Query must be at least one letter!');
+    return;
+  }
 
   fetchPictures(inputData)
     .then(data => {
@@ -33,10 +42,7 @@ function onSubmit(event) {
     })
     .then(data => {
       renderPictures(data);
-      const gallery = new SimpleLightbox('.gallery a', {
-        captionsData: 'alt',
-        captionDelay: 250,
-      });
+      gallery.refresh();
     })
     .catch(error => error);
 
@@ -90,9 +96,3 @@ function populateUserInput() {
 
   refs.form.elements.searchQuery.value = inputData;
 }
-
-// getPictures().then(data => {
-//   const picture = data.hits[5].webformatURL;
-//   const markUp = `<img src="${picture}">`;
-//   refs.gallery.insertAdjacentHTML('beforeend', markUp);
-// });

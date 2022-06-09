@@ -11,9 +11,6 @@ const searchParams = new URLSearchParams({
 
 export default async function fetchPictures(userQuery) {
   try {
-    if (!userQuery) {
-      throw new Error();
-    }
     const response = await axios.get(
       `${BASE_URL}?q=${userQuery}&${searchParams}`
     );
@@ -22,6 +19,6 @@ export default async function fetchPictures(userQuery) {
     console.log(data);
     return data;
   } catch (error) {
-    Notify.failure('Query must be at least one letter!');
+    console.log(error);
   }
 }
