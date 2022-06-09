@@ -31,17 +31,22 @@ function onSubmit(event) {
       }
       return data;
     })
-    .then(renderPictures)
+    .then(data => {
+      renderPictures(data);
+      const gallery = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionDelay: 250,
+      });
+    })
     .catch(error => error);
 
-  // event.currentTarget.reset();
-  // localStorage.removeItem(STORAGE_KEY);
-  // inputData = null;
+  event.currentTarget.reset();
+  localStorage.removeItem(STORAGE_KEY);
+  inputData = null;
 }
 
 function renderPictures(picturesData) {
   const markUp = picturesData.hits.map(createPictureMarkup).join('');
-  console.log(markUp);
   refs.gallery.insertAdjacentHTML('beforeend', markUp);
 }
 
@@ -55,20 +60,20 @@ function createPictureMarkup({
   downloads,
 }) {
   return `<div class="photo-card">
-  <a href="${largeImageURL}">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+  <a href="${largeImageURL}" class="gallery__link">
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" class="gallery__image" />
   </a>
-  <div class="info">
-    <p class="info-item">
+  <div class="gallery__info">
+    <p class="gallery__info-item">
       <b>${likes}</b>
     </p>
-    <p class="info-item">
+    <p class="gallery__info-item">
       <b>${views}</b>
     </p>
-    <p class="info-item">
+    <p class="gallery__info-item">
       <b>${comments}</b>
     </p>
-    <p class="info-item">
+    <p class="gallery__info-item">
       <b>${downloads}</b>
     </p>
   </div>
