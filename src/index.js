@@ -1,7 +1,6 @@
 import './css/styles.css';
 import getRefs from './js/getRefs';
-// import fetchPictures from './js/fetchPictures';
-import PicturesApiService from './js/additional-api';
+import PicturesApiService from './js/picturesApiService';
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -13,22 +12,43 @@ const gallery = new SimpleLightbox('.gallery a', {
 });
 const picturesApiService = new PicturesApiService();
 
+///////////////////////////////////////////////////////////
+
+function handleIntersection(entries) {
+  entries.map(entry => {
+    if (entry.isIntersecting) {
+      Notify.info("We're sorry, but you've reached the end of search results.");
+      observer.disconnect();
+    }
+  });
+}
+
+const observer = new IntersectionObserver(handleIntersection);
+
+///////////////////////////////////////////////////////////
+
 refs.form.addEventListener('submit', onSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onLoadMore() {
+  if (picturesApiService.hitsCounter >= picturesApiService.totalHits) {
+    observer.observe(refs.loadMoreBtn);
+    return;
+  }
+
+  picturesApiService.updateHitsCounter();
   picturesApiService.updatePage();
   picturesApiService
     .fetchPictures()
-    .then(data => {
-      renderPictures(data);
-      gallery.refresh();
-    })
+    .then(renderPictures)
     .catch(error => error);
 }
 
 function onSubmit(event) {
   event.preventDefault();
+
+  hideLoadMoreBtn();
+  refs.gallery.innerHTML = '';
 
   if (!event.currentTarget.elements.searchQuery.value) {
     Notify.failure('Query must be at least one letter!');
@@ -36,6 +56,8 @@ function onSubmit(event) {
   }
 
   picturesApiService.query = event.currentTarget.elements.searchQuery.value;
+  picturesApiService.resetHitsCounter();
+  picturesApiService.updateHitsCounter();
   picturesApiService.resetPage();
   picturesApiService
     .fetchPictures()
@@ -47,9 +69,8 @@ function onSubmit(event) {
           )
         );
       } else {
-        refs.gallery.innerHTML = '';
         renderPictures(data);
-        gallery.refresh();
+        showLoadMoreBtn();
       }
     })
     .catch(error => error);
@@ -58,6 +79,7 @@ function onSubmit(event) {
 function renderPictures(picturesData) {
   const markUp = picturesData.hits.map(createPictureMarkup).join('');
   refs.gallery.insertAdjacentHTML('beforeend', markUp);
+  gallery.refresh();
 }
 
 function createPictureMarkup({
@@ -89,3 +111,13 @@ function createPictureMarkup({
   </div>
 </div>`;
 }
+
+function showLoadMoreBtn() {
+  refs.loadMoreBtn.classList.remove('is-hidden');
+}
+
+function hideLoadMoreBtn() {
+  refs.loadMoreBtn.classList.add('is-hidden');
+}
+
+observer.observe(refs.loadMoreBtn);
