@@ -65,6 +65,18 @@ export const additionalAPI = {
   hideLoadMoreBtn() {
     refs.loadMoreBtn.classList.add('is-hidden');
   },
+
+  scrollBy() {
+    const { height: cardHeight } =
+      refs.gallery.firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top:
+        cardHeight * 3 -
+        parseInt(window.getComputedStyle(refs.gallery).gridGap),
+      behavior: 'smooth',
+    });
+  },
 };
 
 export const observer = new IntersectionObserver(

@@ -15,6 +15,7 @@ export const handlers = {
       .fetchPictures()
       .then(data => {
         additionalAPI.renderPictures(data);
+        additionalAPI.scrollBy();
 
         if (picturesApiService.hitsCounter >= picturesApiService.totalHits) {
           observer.observe(refs.loadMoreBtn);
