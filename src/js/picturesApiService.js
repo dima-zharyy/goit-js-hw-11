@@ -32,8 +32,6 @@ export default class PicturesApiService {
     }
   }
 
-  showTotal() {}
-
   updateHitsCounter() {
     const perPageQuantity = Number(
       PicturesApiService.searchParams.get('per_page')
