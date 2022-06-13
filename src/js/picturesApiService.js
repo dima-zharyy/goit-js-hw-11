@@ -25,7 +25,6 @@ export default class PicturesApiService {
 
       const data = await response.data;
       this.totalHits = data.totalHits;
-      console.log(data);
       return data;
     } catch (error) {
       console.log(error);
@@ -37,7 +36,6 @@ export default class PicturesApiService {
       PicturesApiService.searchParams.get('per_page')
     );
     this.hitsCounter += perPageQuantity;
-    console.log(this.hitsCounter);
   }
 
   resetHitsCounter() {
