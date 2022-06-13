@@ -2,6 +2,7 @@ import getRefs from './getRefs';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { handlers } from './handlers';
 
 const gallery = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
@@ -11,6 +12,15 @@ const gallery = new SimpleLightbox('.gallery a', {
 const refs = getRefs();
 
 export const additionalAPI = {
+  handleIntersectionLoadMorePictures(entries) {
+    entries.map(entry => {
+      if (entry.isIntersecting) {
+        handlers.onLoadMore();
+        observerOnLoadMorePictures.disconnect();
+      }
+    });
+  },
+
   handleIntersection(entries) {
     entries.map(entry => {
       if (entry.isIntersecting) {
@@ -59,11 +69,13 @@ export const additionalAPI = {
   },
 
   showLoadMoreBtn() {
-    refs.loadMoreBtn.classList.remove('is-hidden');
+    // refs.loadMoreBtn.classList.remove('is-hidden');
+    refs.loadMoreBtn.classList.remove('destroy-btn');
   },
 
   hideLoadMoreBtn() {
-    refs.loadMoreBtn.classList.add('is-hidden');
+    // refs.loadMoreBtn.classList.add('is-hidden');
+    refs.loadMoreBtn.classList.add('destroy-btn');
   },
 
   scrollBy() {
@@ -71,9 +83,7 @@ export const additionalAPI = {
       refs.gallery.firstElementChild.getBoundingClientRect();
 
     window.scrollBy({
-      top:
-        cardHeight * 3 -
-        parseInt(window.getComputedStyle(refs.gallery).gridGap),
+      top: cardHeight * 4.39,
       behavior: 'smooth',
     });
   },
@@ -81,4 +91,8 @@ export const additionalAPI = {
 
 export const observer = new IntersectionObserver(
   additionalAPI.handleIntersection
+);
+
+export const observerOnLoadMorePictures = new IntersectionObserver(
+  additionalAPI.handleIntersectionLoadMorePictures
 );

@@ -1,8 +1,11 @@
 import getRefs from './getRefs';
 import PicturesApiService from './picturesApiService';
-import { additionalAPI } from './additional-api';
+import {
+  additionalAPI,
+  observerOnLoadMorePictures,
+  observer,
+} from './additional-api';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { observer } from './additional-api';
 
 const refs = getRefs();
 const picturesApiService = new PicturesApiService();
@@ -15,12 +18,15 @@ export const handlers = {
       .fetchPictures()
       .then(data => {
         additionalAPI.renderPictures(data);
-        additionalAPI.scrollBy();
 
         if (picturesApiService.hitsCounter >= picturesApiService.totalHits) {
           observer.observe(refs.loadMoreBtn);
-          additionalAPI.hideLoadMoreBtn();
+          // additionalAPI.hideLoadMoreBtn();
+        } else {
+          observerOnLoadMorePictures.observe(refs.loadMoreBtn);
         }
+
+        additionalAPI.scrollBy();
       })
       .catch(error => error);
   },
@@ -56,7 +62,9 @@ export const handlers = {
 
           if (picturesApiService.hitsCounter >= picturesApiService.totalHits) {
             observer.observe(refs.loadMoreBtn);
-            additionalAPI.hideLoadMoreBtn();
+            // additionalAPI.hideLoadMoreBtn();
+          } else {
+            observerOnLoadMorePictures.observe(refs.loadMoreBtn);
           }
         }
       })
