@@ -12,6 +12,8 @@ const picturesApiService = new PicturesApiService();
 
 export const handlers = {
   onLoadMore() {
+    observerOnLoadMorePictures.disconnect();
+
     picturesApiService.updateHitsCounter();
     picturesApiService.updatePage();
     picturesApiService
@@ -34,6 +36,8 @@ export const handlers = {
   onSubmit(event) {
     event.preventDefault();
 
+    observer.disconnect();
+    observerOnLoadMorePictures.disconnect();
     additionalAPI.hideLoadMoreBtn();
     refs.gallery.innerHTML = '';
 
